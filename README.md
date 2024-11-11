@@ -45,11 +45,12 @@ app/
 ```
 spec/
 ├── core/              # Tests for domain logic
-│   ├── entities/      # Entity tests
-│   ├── repositories/  # Repository tests
-│   └── use_cases/     # Use case tests
+│   ├── entities/      # Entities unit tests
+│   ├── repositories/  # Repositories unit tests
+│   ├── serializers/   # Serializers unit tests
+│   └── use_cases/     # Use cases unit tests
 ├── factories/         # Test data factories
-├── requests/          # API endpoint tests
+├── requests/          # API endpoint integration tests
 └── support/           # Test helper modules
 ```
 
