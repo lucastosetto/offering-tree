@@ -133,11 +133,8 @@ config/
    bin/rails db:migrate
    ```
 
-   > **Note**: Make sure to run migrations in both environments:
-   > ```bash
-   > RAILS_ENV=test bin/rails db:migrate          # Required for running tests
-   > RAILS_ENV=development bin/rails db:migrate   # Required for running server
-   > ```
+   > **Note**: Make sure to run migrations in the appropriate environment: `RAILS_ENV=test bin/rails db:migrate` (before running tests) or `RAILS_ENV=development bin/rails db:migrate` (before running local server).
+
 
 ### Running Tests
 
