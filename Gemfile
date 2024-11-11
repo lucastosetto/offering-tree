@@ -10,4 +10,7 @@ gem "sqlite3", "~> 1.6"
 
 group :development, :test do
   gem "byebug"
+  gem "rspec-rails"
+  gem "factory_bot_rails"
+  gem "faker"
 end
