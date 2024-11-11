@@ -34,3 +34,6 @@
 
 # Ignore byebug history
 .byebug_history
+
+# Ignore coverage report
+coverage/*
