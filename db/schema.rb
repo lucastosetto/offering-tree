@@ -13,7 +13,7 @@
 ActiveRecord::Schema[7.1].define(version: 2024_02_27_000002) do
   create_table "pay_rate_bonuses", force: :cascade do |t|
     t.integer "pay_rate_id", null: false
-    t.decimal "rate_per_client", precision: 10, scale: 2, null: false
+    t.float "rate_per_client", null: false
     t.integer "min_client_count"
     t.integer "max_client_count"
     t.datetime "created_at", null: false
@@ -23,7 +23,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_02_27_000002) do
 
   create_table "pay_rates", force: :cascade do |t|
     t.string "rate_name", limit: 50, null: false
-    t.decimal "base_rate_per_client", precision: 10, scale: 2, null: false
+    t.float "base_rate_per_client", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["rate_name"], name: "index_pay_rates_on_rate_name"
