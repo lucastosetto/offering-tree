@@ -12,7 +12,9 @@ RSpec.describe PayRateBonus, type: :model do
     context 'when rate_per_client is empty' do
       it 'is invalid' do
         bonus = build(:pay_rate_bonus, rate_per_client: nil)
+
         bonus.valid?
+
         expect(bonus.errors[:rate_per_client]).to include("can't be blank")
       end
     end
@@ -20,7 +22,9 @@ RSpec.describe PayRateBonus, type: :model do
     context 'when rate_per_client is zero or negative' do
       it 'is invalid' do
         bonus = build(:pay_rate_bonus, rate_per_client: 0)
+
         bonus.valid?
+
         expect(bonus.errors[:rate_per_client]).to include('must be greater than 0')
       end
     end
@@ -28,7 +32,9 @@ RSpec.describe PayRateBonus, type: :model do
     context 'when min_client_count is negative' do
       it 'is invalid' do
         bonus = build(:pay_rate_bonus, min_client_count: -1)
+
         bonus.valid?
+
         expect(bonus.errors[:min_client_count]).to include('must be greater than or equal to 0')
       end
     end
@@ -37,7 +43,9 @@ RSpec.describe PayRateBonus, type: :model do
       it 'is invalid' do
         min_client_count = 5
         bonus = build(:pay_rate_bonus, min_client_count: min_client_count, max_client_count: 4)
+
         bonus.valid?
+
         expect(bonus.errors[:max_client_count]).to include("must be greater than #{min_client_count}")
       end
     end
@@ -46,8 +54,36 @@ RSpec.describe PayRateBonus, type: :model do
       it 'is invalid' do
         min_client_count = 5
         bonus = build(:pay_rate_bonus, min_client_count: min_client_count, max_client_count: 5)
+
         bonus.valid?
+
         expect(bonus.errors[:max_client_count]).to include("must be greater than #{min_client_count}")
+      end
+    end
+
+    context 'when both client counts are nil' do
+      it 'is invalid' do
+        bonus = build(:pay_rate_bonus, min_client_count: nil, max_client_count: nil)
+
+        bonus.valid?
+
+        expect(bonus.errors[:base]).to include('At least one of min_client_count or max_client_count must be present')
+      end
+    end
+
+    context 'when only min_client_count is present' do
+      it 'is valid' do
+        bonus = build(:pay_rate_bonus, min_client_count: 5, max_client_count: nil)
+
+        expect(bonus).to be_valid
+      end
+    end
+
+    context 'when only max_client_count is present' do
+      it 'is valid' do
+        bonus = build(:pay_rate_bonus, min_client_count: nil, max_client_count: 10)
+
+        expect(bonus).to be_valid
       end
     end
   end
