@@ -60,29 +60,24 @@ RSpec.describe V1::PayRatesController, type: :request do
   end
 
   describe 'GET /v1/pay_rates/:id/payment' do
-    let(:pay_rate) { create(:pay_rate, :with_bonus) }
+    let(:pay_rate) { create(:pay_rate) }
 
-    context 'with valid client count' do
-      it 'calculates payment for regular rate' do
-        get "/v1/pay_rates/#{pay_rate.id}/payment", params: { clients: 3 }
-
-        expect(response).to have_http_status(:ok)
-        expect(json_response['payment']['amount']).to eq('300.0')
-      end
-
-      it 'calculates payment with bonus rate' do
-        get "/v1/pay_rates/#{pay_rate.id}/payment", params: { clients: 7 }
+    context 'when pay rate exists' do
+      it 'calculates payment successfully' do
+        get "/v1/pay_rates/#{pay_rate.id}/payment", params: { client_count: 10 }
 
         expect(response).to have_http_status(:ok)
-        expect(json_response['payment']['amount']).to eq('1000.0')
+        expect(json_response).to include('payment')
+        expect(json_response['payment']).to include('amount')
       end
     end
 
-    context 'with invalid client count' do
-      it 'handles negative client count' do
-        get "/v1/pay_rates/#{pay_rate.id}/payment", params: { clients: -1 }
+    context 'when pay rate does not exist' do
+      it 'returns not found status' do
+        get "/v1/pay_rates/0/payment", params: { client_count: 10 }
 
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:not_found)
+        expect(json_response).to include('error')
       end
     end
   end

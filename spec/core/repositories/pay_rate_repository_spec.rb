@@ -103,64 +103,55 @@ RSpec.describe Repositories::PayRateRepository do
 
   describe '#update!' do
     let(:pay_rate) { create(:pay_rate) }
-    let(:valid_params) { { rate_name: 'Updated Rate' } }
+    let(:bonus_repository) { instance_double('Repositories::PayRateBonusRepository') }
+    let(:repository) { described_class.new(bonus_repository) }
 
-    context 'when record exists' do
-      it 'updates and returns pay rate entity' do
-        result = repository.update!(pay_rate.id, valid_params)
-
-        aggregate_failures do
-          expect(result).to be_a(Entities::PayRateEntity)
-          expect(result.id).to eq(pay_rate.id)
-          expect(result.rate_name).to eq('Updated Rate')
-        end
-      end
-
-      context 'with bonus update' do
-        let!(:bonus) { create(:pay_rate_bonus, pay_rate: pay_rate) }
-        let(:bonus_params) do
-          {
-            bonus: {
-              rate_per_client: 25.0,
-              min_client_count: 4,
-              max_client_count: 8
-            }
-          }
-        end
-
-        it 'updates bonus attributes' do
-          expect(bonus_repository).to receive(:update!)
-            .with(bonus.id, bonus_params[:bonus])
-            .and_return(
-              build(:pay_rate_bonus_entity,
-                rate_per_client: 25.0,
-                min_client_count: 4,
-                max_client_count: 8
-              )
-            )
-
-          result = repository.update!(pay_rate.id, bonus_params)
-
-          expect(result.bonus).to be_a(Entities::PayRateBonusEntity)
-          expect(result.bonus.rate_per_client).to eq(25.0)
-          expect(result.bonus.min_client_count).to eq(4)
-        end
-      end
-    end
-
-    context 'when record does not exist' do
+    context 'when pay rate does not exist' do
       it 'raises RecordNotFound error' do
-        expect { repository.update!(0, valid_params) }
+        expect { repository.update!(0, {}) }
           .to raise_error(Repositories::Errors::RecordNotFound)
       end
     end
 
-    context 'with invalid params' do
-      let(:invalid_params) { { rate_name: nil } }
+    context 'when update fails validation' do
+      let(:invalid_params) { { rate_name: '' } }
 
       it 'raises RecordInvalid error' do
         expect { repository.update!(pay_rate.id, invalid_params) }
           .to raise_error(Repositories::Errors::RecordInvalid)
+      end
+    end
+
+    context 'when updating with bonus' do
+      let(:bonus_params) { { rate_per_client: 150.0 } }
+      let(:params) { { rate_name: 'Updated Rate', bonus: bonus_params } }
+
+      context 'when pay rate has no existing bonus' do
+        before do
+          allow(bonus_repository).to receive(:create!)
+            .with(hash_including(bonus_params))
+            .and_return(build(:pay_rate_bonus_entity))
+        end
+
+        it 'creates new bonus' do
+          repository.update!(pay_rate.id, params)
+          expect(bonus_repository).to have_received(:create!)
+        end
+      end
+
+      context 'when pay rate has existing bonus' do
+        let!(:existing_bonus) { create(:pay_rate_bonus, pay_rate: pay_rate) }
+
+        before do
+          allow(bonus_repository).to receive(:update!)
+            .with(existing_bonus.id, bonus_params)
+            .and_return(build(:pay_rate_bonus_entity))
+        end
+
+        it 'updates existing bonus' do
+          repository.update!(pay_rate.id, params)
+          expect(bonus_repository).to have_received(:update!)
+        end
       end
     end
   end

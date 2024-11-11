@@ -2,6 +2,7 @@ module V1
   class PayRatesController < ApplicationController
     rescue_from UseCases::Errors::PayRateCreationFailed, with: :render_unprocessable_entity
     rescue_from UseCases::Errors::PayRateUpdateFailed, with: :render_unprocessable_entity
+    rescue_from UseCases::Errors::PayRateNotFound, with: :render_not_found
     rescue_from TypeError, with: :render_unprocessable_entity
     rescue_from ArgumentError, with: :render_unprocessable_entity
 

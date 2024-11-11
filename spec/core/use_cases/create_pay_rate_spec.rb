@@ -51,5 +51,16 @@ RSpec.describe UseCases::CreatePayRate do
           }
       end
     end
+
+    context 'when pay rate not found' do
+      before do
+        allow(repository).to receive(:create!).and_raise(Repositories::Errors::RecordNotFound)
+      end
+
+      it 'raises PayRateNotFound error' do
+        expect { use_case.execute(params: params) }
+          .to raise_error(UseCases::Errors::PayRateNotFound)
+      end
+    end
   end
 end
