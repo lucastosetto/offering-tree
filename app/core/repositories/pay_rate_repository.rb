@@ -1,6 +1,6 @@
 module Repositories
   class PayRateRepository
-    def initialize(bonus_repository: PayRateBonusRepository.new)
+    def initialize(bonus_repository)
       @bonus_repository = bonus_repository
     end
 

@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe Repositories::PayRateRepository do
   let(:bonus_repository) { instance_double(Repositories::PayRateBonusRepository) }
-  let(:repository) { described_class.new(bonus_repository: bonus_repository) }
+  let(:repository) { described_class.new(bonus_repository) }
 
   describe '#find!' do
     context 'when record exists' do

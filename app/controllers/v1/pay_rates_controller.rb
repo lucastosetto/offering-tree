@@ -29,7 +29,10 @@ module V1
     private
 
     def pay_rate_repository
-      @pay_rate_repository ||= Repositories::PayRateRepository.new
+      @pay_rate_repository ||= begin
+        bonus_repository = Repositories::PayRateBonusRepository.new
+        Repositories::PayRateRepository.new(bonus_repository)
+      end
     end
 
     def pay_rate_params
