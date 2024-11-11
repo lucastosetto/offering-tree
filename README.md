@@ -129,9 +129,15 @@ config/
 
 3. Setup Database:
    ```bash
-   rails db:create
-   rails db:migrate
+   bin/rails db:create
+   bin/rails db:migrate
    ```
+
+   > **Note**: Make sure to run migrations in both environments:
+   > ```bash
+   > RAILS_ENV=test bin/rails db:migrate          # Required for running tests
+   > RAILS_ENV=development bin/rails db:migrate   # Required for running server
+   > ```
 
 ### Running Tests
 
@@ -157,18 +163,11 @@ xdg-open coverage/index.html        # Linux
 explorer.exe coverage/index.html    # Windows (WSL2)
 ```
 
-Key coverage requirements:
-- Minimum coverage: 90%
-- Covered directories:
-  - `app/controllers/`
-  - `app/core/`
-  - `app/models/`
-
 ### Running Local Server
 
 ```bash
 # Start server
-rails server
+bin/rails server
 
 # Server will be available at:
 http://localhost:3000
